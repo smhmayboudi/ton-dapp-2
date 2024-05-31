@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"github.com/smhmayboudi/ton-dapp-2/datatype"
 )
 
-var networks = map[string]*liteapi.Client{}
+var Networks = map[string]*liteapi.Client{}
 
 func GetAccountInfo(ctx context.Context, address tongo.AccountID, net *liteapi.Client) (*datatype.AccountInfo, error) {
 	account, err := net.GetAccountState(ctx, address)
