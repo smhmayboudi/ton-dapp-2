@@ -8,8 +8,6 @@ import {hydrateApi, hydrateContext} from '@grammyjs/hydrate';
 import {Hono} from 'hono';
 import {initial, sha256} from './libs';
 import {HTTPException} from 'hono/http-exception';
-import {Ai} from '@cloudflare/ai';
-import {AiTextToImageInput} from '@cloudflare/ai/dist/ai/tasks/text-to-image';
 
 const app = new Hono<Env>();
 
@@ -34,7 +32,7 @@ app.get('/:sha256_bot_token/webhook/:webhook_command', async ctx => {
   return ctx.json(null, 404);
 });
 
-app.use('/bot', async (ctx, next) => {
+app.use('/bot', async (ctx) => {
   const bot = new Bot<CustomContext, CustomApi>(ctx.env.BOT_TOKEN);
   const getSessionKey = (ctx: Omit<CustomContext, 'session'>) =>
     ctx.from === undefined || ctx.chat === undefined ? undefined : `${ctx.chat.id}:${ctx.from.id}`;
@@ -68,17 +66,16 @@ app.use('/bot', async (ctx, next) => {
     }
   });
 
-  return webhookCallback(bot, 'hono')(ctx, next);
+  return webhookCallback(bot, 'hono')(ctx);
 });
 
 app.get('/decor/:prompt', async ctx => {
   const {prompt} = ctx.req.param();
-  const ai = new Ai(ctx.env?.AI);
   const guidance = 7.5;
   const num_steps = 8;
   const strength = 1;
   const inputs: AiTextToImageInput = {guidance, num_steps, prompt, strength};
-  const response = await ai.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+  const response = await (ctx.env.AI as any).run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
   return ctx.body(response);
 });
 

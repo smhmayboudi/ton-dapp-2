@@ -2,8 +2,6 @@ import {Router} from '@grammyjs/router';
 import {CustomContext} from '../types';
 import consts from '../consts';
 import {InputFile, Keyboard} from 'grammy';
-import {Ai} from '@cloudflare/ai';
-import {AiTextToImageInput} from '@cloudflare/ai/dist/ai/tasks/text-to-image';
 
 const router = new Router<CustomContext>(async ctx => (await ctx.session).route);
 
@@ -189,7 +187,6 @@ router.route('decor-q5', async ctx => {
 
   session.route = '';
   ctx.chatAction = 'upload_photo';
-  const ai = new Ai(ctx.env?.AI);
   const guidance = 7.5;
   const num_steps = 8;
   const prompt = Object.entries(session.decor)
@@ -197,7 +194,7 @@ router.route('decor-q5', async ctx => {
     .join(' ');
   const strength = 1;
   const inputs: AiTextToImageInput = {guidance, num_steps, prompt, strength};
-  const response = await ai.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+  const response = await (ctx.env.AI as any).run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
   const inputFile = new InputFile(response);
   await ctx.replyWithPhoto(inputFile, {
     reply_markup: {remove_keyboard: true},

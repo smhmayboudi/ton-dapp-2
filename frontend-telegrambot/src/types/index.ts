@@ -12,7 +12,7 @@ interface Decor {
 
 type Env = {
   Bindings: {
-    AI: Fetcher;
+    AI: unknown;
     D1: D1Database;
     BOT_TOKEN: string;
   };
