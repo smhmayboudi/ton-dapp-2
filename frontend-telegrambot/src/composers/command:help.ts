@@ -5,6 +5,7 @@ import { helps } from './';
 const composer = new Composer<CustomContext>();
 
 composer.command('help', async (ctx) => {
+	console.log('help');
 	await ctx.reply(helps.join(' '), {
 		reply_markup: { remove_keyboard: true },
 	});

@@ -35,7 +35,10 @@ export const AT_WALLET_APP_NAME = 'telegram-wallet';
 
 export const pTimeoutException = Symbol();
 
+const TELEGRAM_BOT_LINK = 'https://t.me/front_end_telegram_bot';
+
 export function pTimeout<T>(promise: Promise<T>, time: number, exception: unknown = pTimeoutException): Promise<T> {
+	console.log('pTimeout', promise, time, exception);
 	let timer: ReturnType<typeof setTimeout>;
 	return Promise.race([promise, new Promise((_r, rej) => (timer = setTimeout(rej, time, exception)))]).finally(() =>
 		clearTimeout(timer),
@@ -43,6 +46,7 @@ export function pTimeout<T>(promise: Promise<T>, time: number, exception: unknow
 }
 
 export function addTGReturnStrategy(link: string, strategy: string): string {
+	console.log('addTGReturnStrategy', link, strategy);
 	const parsed = new URL(link);
 	parsed.searchParams.append('ret', strategy);
 	link = parsed.toString();
@@ -52,6 +56,7 @@ export function addTGReturnStrategy(link: string, strategy: string): string {
 }
 
 export function convertDeeplinkToUniversalLink(link: string, walletUniversalLink: string): string {
+	console.log('convertDeeplinkToUniversalLink', link, walletUniversalLink);
 	const search = new URL(link).search;
 	const url = new URL(walletUniversalLink);
 
@@ -66,9 +71,10 @@ export function convertDeeplinkToUniversalLink(link: string, walletUniversalLink
 }
 
 export async function buildUniversalKeyboard(link: string, wallets: WalletInfoRemote[]): Promise<InlineKeyboardButton[]> {
+	console.log('buildUniversalKeyboard', link, wallets);
 	const atWallet = wallets.find((wallet) => wallet.appName.toLowerCase() === AT_WALLET_APP_NAME);
 	const atWalletLink = atWallet
-		? addTGReturnStrategy(convertDeeplinkToUniversalLink(link, atWallet?.universalLink), process.env.TELEGRAM_BOT_LINK!)
+		? addTGReturnStrategy(convertDeeplinkToUniversalLink(link, atWallet?.universalLink), TELEGRAM_BOT_LINK!)
 		: undefined;
 
 	const keyboard = [

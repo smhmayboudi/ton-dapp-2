@@ -13,8 +13,9 @@ interface Decor {
 type Env = {
 	Bindings: {
 		AI: unknown;
-		D1: D1Database;
 		BOT_TOKEN: string;
+		D1: D1Database;
+		KV: KVNamespace;
 	};
 	Variables: {};
 };

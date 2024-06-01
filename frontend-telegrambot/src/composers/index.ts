@@ -1,12 +1,16 @@
+import commandConnect from './command:connect';
+import commandDisconnect from './command:disconnect';
 import commandHelp from './command:help';
+import commandMyWallet from './command:mywallet';
+import commandSendTX from './command:sendtx';
 import commandSettings from './command:settings';
 import commandStart from './command:start';
-import helpStart from './command:start';
+import { help } from './command:start';
 import use from './use';
 
-const composers = [commandHelp, commandSettings, commandStart, use];
+const composers = [commandConnect, commandDisconnect, commandHelp, commandMyWallet, commandSendTX, commandSettings, commandStart, use];
 
-const helps = [helpStart];
+const helps = [help];
 
 export default composers;
-export {helps};
+export { helps };
