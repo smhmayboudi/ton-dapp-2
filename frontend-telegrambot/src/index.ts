@@ -75,7 +75,7 @@ app.get('/decor/:prompt', async (ctx) => {
 	const num_steps = 8;
 	const strength = 1;
 	const inputs: AiTextToImageInput = { guidance, num_steps, prompt, strength };
-	const response = await (ctx.env.AI as any).run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+	const response = await ctx.env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
 	return ctx.body(response);
 });
 

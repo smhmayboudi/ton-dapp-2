@@ -8,7 +8,7 @@ import commandStart from './command:start';
 import { help } from './command:start';
 import use from './use';
 
-const composers = [commandConnect, commandDisconnect, commandHelp, commandMyWallet, commandSendTX, commandSettings, commandStart, use];
+const composers = [commandHelp, commandSettings, commandStart, use];
 
 const helps = [help];
 

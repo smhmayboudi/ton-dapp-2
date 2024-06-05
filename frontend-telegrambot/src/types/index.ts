@@ -12,10 +12,13 @@ interface Decor {
 
 type Env = {
 	Bindings: {
-		AI: unknown;
+		AI: Ai;
 		BOT_TOKEN: string;
 		D1: D1Database;
 		KV: KVNamespace;
+		PINATA_API_KEY: string;
+		PINATA_API_SECRET: string;
+		PINATA_JWT: string;
 	};
 	Variables: {};
 };

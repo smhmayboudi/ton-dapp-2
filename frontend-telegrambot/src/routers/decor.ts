@@ -2,6 +2,7 @@ import { Router } from '@grammyjs/router';
 import { CustomContext } from '../types';
 import consts from '../consts';
 import { InputFile, Keyboard } from 'grammy';
+import { type PinataPinResponse } from '@pinata/sdk';
 
 const router = new Router<CustomContext>(async (ctx) => (await ctx.session).route);
 
@@ -194,11 +195,41 @@ router.route('decor-q5', async (ctx) => {
 		.join(' ');
 	const strength = 1;
 	const inputs: AiTextToImageInput = { guidance, num_steps, prompt, strength };
-	const response = await (ctx.env.AI as any).run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+	const response = await ctx.env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+
+	// const fileToUpload = new File(["FILE"], `${new Date().getTime()}.png`, { type: 'image/png' });
+	// const fileToUpload = new File(['TEXT'], `${new Date().getTime()}.txt`, { type: 'text/plain' });
+	// const pinataPinFileIPFS = await uploadFile(ctx.env.PINATA_JWT, fileToUpload);
+
 	const inputFile = new InputFile(response);
 	await ctx.replyWithPhoto(inputFile, {
+		// caption: `https://ipfs.io/ipfs/${pinataPinFileIPFS?.IpfsHash}\nhttps://gateway.pinata.cloud/ipfs/${pinataPinFileIPFS?.IpfsHash}\ncurl ipfs://${pinataPinFileIPFS?.IpfsHash} --ipfs-gateway gateway.pinata.cloud`,
 		reply_markup: { remove_keyboard: true },
 	});
 });
 
 export default router;
+
+const uploadFile = async (pinataJWT: string, file: File): Promise<PinataPinResponse | null> => {
+	try {
+		console.log('uploadFile');
+		const form = new FormData();
+		form.append('file', file);
+		form.append('pinataMetadata', JSON.stringify({ name: `${file.name}` }));
+		form.append('pinataOptions', JSON.stringify({ cidVersion: 1 }));
+		const request = new Request('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+			body: form,
+			headers: {
+				Authorization: `Bearer ${pinataJWT}`,
+				'Content-Type': 'multipart/form-data',
+			},
+			method: 'POST',
+		});
+		const response = await fetch(request);
+		console.log('response', JSON.stringify(response));
+		return response.json() as Promise<PinataPinResponse>;
+	} catch (err) {
+		console.error('error', err);
+		return null;
+	}
+};
