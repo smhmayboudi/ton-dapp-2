@@ -194,42 +194,57 @@ router.route('decor-q5', async (ctx) => {
 		.map((a) => a[1])
 		.join(' ');
 	const strength = 1;
-	const inputs: AiTextToImageInput = { guidance, num_steps, prompt, strength };
-	const response = await ctx.env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+	// const inputs: AiTextToImageInput = { guidance, num_steps, prompt, strength };
+	// const response = await ctx.env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
+	// const arrayBuffer = response.buffer;
 
-	// const fileToUpload = new File(["FILE"], `${new Date().getTime()}.png`, { type: 'image/png' });
-	// const fileToUpload = new File(['TEXT'], `${new Date().getTime()}.txt`, { type: 'text/plain' });
-	// const pinataPinFileIPFS = await uploadFile(ctx.env.PINATA_JWT, fileToUpload);
+	const { readable } = new TransformStream();
+	const reader = readable.getReader();
 
-	const inputFile = new InputFile(response);
+	const url = 'https://decorestan.com/wp-content/uploads/2023/12/%D8%A7%D8%AA%D8%A7%D9%82-%D9%86%D8%B4%DB%8C%D9%85%D9%86.webp';
+	const response = await fetch(url);
+	const arrayBuffer = await response.arrayBuffer();
+
+	const file = new File([arrayBuffer], `${new Date().getTime()}.jpeg`, { type: 'image/jpeg' });
+	const { IpfsHash } = await uploadFile(ctx.env.PINATA_JWT, file, file.name);
+	const inputFile = new InputFile(response, file.name);
 	await ctx.replyWithPhoto(inputFile, {
-		// caption: `https://ipfs.io/ipfs/${pinataPinFileIPFS?.IpfsHash}\nhttps://gateway.pinata.cloud/ipfs/${pinataPinFileIPFS?.IpfsHash}\ncurl ipfs://${pinataPinFileIPFS?.IpfsHash} --ipfs-gateway gateway.pinata.cloud`,
+		caption: `https://ipfs.io/ipfs/${IpfsHash} OR curl ipfs://${IpfsHash} --ipfs-gateway ipfs.io
+        \nhttps://gateway.pinata.cloud/ipfs/${IpfsHash} OR curl ipfs://${IpfsHash} --ipfs-gateway gateway.pinata.cloud`,
 		reply_markup: { remove_keyboard: true },
 	});
 });
 
 export default router;
 
-const uploadFile = async (pinataJWT: string, file: File): Promise<PinataPinResponse | null> => {
-	try {
-		console.log('uploadFile');
-		const form = new FormData();
-		form.append('file', file);
-		form.append('pinataMetadata', JSON.stringify({ name: `${file.name}` }));
-		form.append('pinataOptions', JSON.stringify({ cidVersion: 1 }));
-		const request = new Request('https://api.pinata.cloud/pinning/pinFileToIPFS', {
-			body: form,
+const ai = async (cloudflareAccountID: string, cloudflareAPIToken: string, input: AiTextToImageInput): Promise<ArrayBuffer> => {
+	const request = new Request(
+		`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning`,
+		{
+			body: JSON.stringify(input),
 			headers: {
-				Authorization: `Bearer ${pinataJWT}`,
-				'Content-Type': 'multipart/form-data',
+				Authorization: `Bearer ${cloudflareAPIToken}`,
 			},
 			method: 'POST',
-		});
-		const response = await fetch(request);
-		console.log('response', JSON.stringify(response));
-		return response.json() as Promise<PinataPinResponse>;
-	} catch (err) {
-		console.error('error', err);
-		return null;
-	}
+		},
+	);
+	const response = await fetch(request);
+	return response.arrayBuffer();
+};
+
+const uploadFile = async (pinataJWT: string, file: Blob, filename: string): Promise<PinataPinResponse> => {
+	const form = new FormData();
+	form.append('file', file, 'decorestan/' + filename);
+	// form.append('pinataMetadata', JSON.stringify({ name: `${filename}` }));
+	// form.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
+	const request = new Request('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+		body: form,
+		headers: {
+			Authorization: `Bearer ${pinataJWT}`,
+			// 'Content-Type': 'multipart/form-data',
+		},
+		method: 'POST',
+	});
+	const response = await fetch(request);
+	return response.json() as Promise<PinataPinResponse>;
 };
