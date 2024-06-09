@@ -1,9 +1,6 @@
 import { pseudoRandomBytes } from 'crypto';
 import { Address, BitBuilder, BitReader, Cell, beginCell } from '@ton/ton';
 
-// const OFF_CHAIN_CONTENT_PREFIX = 0x01;
-// const ON_CHAIN_CONTENT_PREFIX = 0x00;
-
 /**
  *
  * @param cell data
@@ -47,16 +44,19 @@ function bufferToChunks(buff: Buffer, chunkSize: number): Buffer[] {
 
 /**
  *
- * @param content data
+ * @param cell data
  * @param chainContextPrefix 0x00 is on-chain and 0x01 is off-chain
  * @returns
  */
-const encodeChainContent = function (content: string, chainContextPrefix: number = 0x00): Cell {
-	let data = Buffer.from(content);
+const encodeChainContent = function (cell: string, chainContextPrefix: number = 0x00): Cell {
+	let data = Buffer.from(cell);
 	let offChainPrefix = Buffer.from([chainContextPrefix]);
 	data = Buffer.concat([offChainPrefix, data]);
 	return makeSnakeCell(data);
 };
+
+const encodeOnChainContent = (content: string): Cell => encodeChainContent(content, 0x00);
+const encodeOffChainContent = (content: string): Cell => encodeChainContent(content, 0x01);
 
 /**
  *
@@ -73,6 +73,9 @@ const decodeChainContent = function (cell: Cell, chainContextPrefix: number = 0x
 	}
 	return data.subarray(1).toString();
 };
+
+const decodeOnChainContent = (content: Cell): string => decodeChainContent(content, 0x00);
+const decodeOffChainContent = (content: Cell): string => decodeChainContent(content, 0x01);
 
 const makeSnakeCell = function (data: Buffer): Cell {
 	const chunks = bufferToChunks(data, 127);
@@ -110,4 +113,13 @@ const unixNow = function () {
 	return Math.floor(Date.now() / 1000);
 };
 
-export { decodeChainContent, encodeChainContent, flattenSnakeCell, makeSnakeCell, randomAddress, unixNow };
+export {
+	decodeOffChainContent,
+	decodeOnChainContent,
+	encodeOffChainContent,
+	encodeOnChainContent,
+	flattenSnakeCell,
+	makeSnakeCell,
+	randomAddress,
+	unixNow,
+};

@@ -206,6 +206,7 @@ router.route('decor-q5', async (ctx) => {
 
 	const file = new File([arrayBuffer], `${new Date().getTime()}.webp`, { type: 'image/webp' });
 	const { IpfsHash } = await uploadFile(ctx.env.PINATA_JWT, file, file.name);
+
 	const inputFile = new InputFile(response, file.name);
 	await ctx.replyWithPhoto(inputFile, {
 		caption: `https://ipfs.io/ipfs/${IpfsHash} OR curl ipfs://${IpfsHash} --ipfs-gateway ipfs.io
@@ -221,9 +222,7 @@ const ai = async (cloudflareAccountID: string, cloudflareAPIToken: string, input
 		`https://api.cloudflare.com/client/v4/accounts/${cloudflareAccountID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning`,
 		{
 			body: JSON.stringify(input),
-			headers: {
-				Authorization: `Bearer ${cloudflareAPIToken}`,
-			},
+			headers: { Authorization: `Bearer ${cloudflareAPIToken}` },
 			method: 'POST',
 		},
 	);
@@ -238,10 +237,7 @@ const uploadFile = async (pinataJWT: string, file: Blob, filename: string): Prom
 	// form.append('pinataOptions', JSON.stringify({ cidVersion: 0 }));
 	const request = new Request('https://api.pinata.cloud/pinning/pinFileToIPFS', {
 		body: form,
-		headers: {
-			Authorization: `Bearer ${pinataJWT}`,
-			// 'Content-Type': 'multipart/form-data',
-		},
+		headers: { Authorization: `Bearer ${pinataJWT}` },
 		method: 'POST',
 	});
 	const response = await fetch(request);
