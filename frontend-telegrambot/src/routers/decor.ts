@@ -194,18 +194,17 @@ router.route('decor-q5', async (ctx) => {
 		.map((a) => a[1])
 		.join(' ');
 	const strength = 1;
+	// Request to AI
 	// const inputs: AiTextToImageInput = { guidance, num_steps, prompt, strength };
 	// const response = await ctx.env.AI.run('@cf/bytedance/stable-diffusion-xl-lightning', inputs);
 	// const arrayBuffer = response.buffer;
 
-	const { readable } = new TransformStream();
-	const reader = readable.getReader();
-
+	// Get Image File
 	const url = 'https://decorestan.com/wp-content/uploads/2023/12/%D8%A7%D8%AA%D8%A7%D9%82-%D9%86%D8%B4%DB%8C%D9%85%D9%86.webp';
 	const response = await fetch(url);
 	const arrayBuffer = await response.arrayBuffer();
 
-	const file = new File([arrayBuffer], `${new Date().getTime()}.jpeg`, { type: 'image/jpeg' });
+	const file = new File([arrayBuffer], `${new Date().getTime()}.webp`, { type: 'image/webp' });
 	const { IpfsHash } = await uploadFile(ctx.env.PINATA_JWT, file, file.name);
 	const inputFile = new InputFile(response, file.name);
 	await ctx.replyWithPhoto(inputFile, {

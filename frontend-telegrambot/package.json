@@ -24,6 +24,7 @@
 		"@grammyjs/hydrate": "^1.4.1",
 		"@grammyjs/router": "^2.0.0",
 		"@grammyjs/storage-cloudflare": "^2.4.2",
+		"@ton/ton": "^13.11.2",
 		"@tonconnect/sdk": "^3.0.3",
 		"grammy": "^1.24.0",
 		"hono": "^4.4.2",
