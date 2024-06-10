@@ -1,22 +1,25 @@
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
 
-export type NFTConfig = {};
+export type NFTItemConfig = {};
 
-export function nFTConfigToCell(config: NFTConfig): Cell {
+export function nftItemConfigToCell(config: NFTItemConfig): Cell {
     return beginCell().endCell();
 }
 
-export class NFT implements Contract {
-    constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
+export class NFTItem implements Contract {
+    constructor(
+        readonly address: Address,
+        readonly init?: { code: Cell; data: Cell },
+    ) {}
 
     static createFromAddress(address: Address) {
-        return new NFT(address);
+        return new NFTItem(address);
     }
 
-    static createFromConfig(config: NFTConfig, code: Cell, workchain = 0) {
-        const data = nFTConfigToCell(config);
+    static createFromConfig(config: NFTItemConfig, code: Cell, workchain = 0) {
+        const data = nftItemConfigToCell(config);
         const init = { code, data };
-        return new NFT(contractAddress(workchain, init), init);
+        return new NFTItem(contractAddress(workchain, init), init);
     }
 
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {

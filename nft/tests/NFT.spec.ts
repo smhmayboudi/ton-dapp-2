@@ -13,20 +13,20 @@ describe('NFT', () => {
 
     let blockchain: Blockchain;
     let deployer: SandboxContract<TreasuryContract>;
-    let nFT: SandboxContract<NFT>;
+    let nft: SandboxContract<NFT>;
 
     beforeEach(async () => {
         blockchain = await Blockchain.create();
 
-        nFT = blockchain.openContract(NFT.createFromConfig({}, code));
+        nft = blockchain.openContract(NFT.createFromConfig({}, code));
 
         deployer = await blockchain.treasury('deployer');
 
-        const deployResult = await nFT.sendDeploy(deployer.getSender(), toNano('0.05'));
+        const deployResult = await nft.sendDeploy(deployer.getSender(), toNano('0.05'));
 
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,
-            to: nFT.address,
+            to: nft.address,
             deploy: true,
             success: true,
         });
@@ -34,6 +34,6 @@ describe('NFT', () => {
 
     it('should deploy', async () => {
         // the check is done inside beforeEach
-        // blockchain and nFT are ready to use
+        // blockchain and nft are ready to use
     });
 });
