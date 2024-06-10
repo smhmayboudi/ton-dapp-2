@@ -16,9 +16,11 @@ type Env = {
 		BOT_TOKEN: string;
 		D1: D1Database;
 		KV: KVNamespace;
+		MNEMONIC: string;
 		PINATA_API_KEY: string;
 		PINATA_API_SECRET: string;
 		PINATA_JWT: string;
+		TONCENTER_API_KEY: string;
 	};
 	Variables: {};
 };
