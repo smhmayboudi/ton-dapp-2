@@ -1,8 +1,8 @@
 import { pseudoRandomBytes } from 'crypto';
 import { Address, BitBuilder, BitReader, Cell, beginCell } from '@ton/ton';
 
-const OFF_CHAIN_CONTENT_PREFIX = 0x01
-const ON_CHAIN_CONTENT_PREFIX = 0x00
+const OFF_CHAIN_CONTENT_PREFIX = 0x01;
+const ON_CHAIN_CONTENT_PREFIX = 0x00;
 
 /**
  *

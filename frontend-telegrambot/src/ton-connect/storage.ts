@@ -29,6 +29,6 @@ export class TonConnectStorage implements IStorage {
 		console.log('getItem', key);
 		const value = await this.KV.get(key);
 		console.log('getItem done', key, value);
-		return value
+		return value;
 	}
 }
