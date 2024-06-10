@@ -1,5 +1,5 @@
-import { Address, beginCell, Cell, contractAddress, internal, SendMode, StateInit, storeStateInit, toNano } from 'ton-core';
-import { OpenedWallet } from 'utils';
+import { Address, beginCell, Cell, contractAddress, internal, SendMode, StateInit, storeStateInit, toNano } from '@ton/ton';
+import { OpenedWallet } from '../libs';
 
 export type GetGemsSaleData = {
 	isComplete: boolean;

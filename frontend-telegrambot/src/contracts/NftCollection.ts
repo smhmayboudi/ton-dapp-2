@@ -1,4 +1,4 @@
-import { Address, Cell, internal, beginCell, contractAddress, StateInit, SendMode } from 'ton-core';
+import { Address, Cell, internal, beginCell, contractAddress, StateInit, SendMode } from '@ton/ton';
 import { encodeOffChainContent, OpenedWallet } from '../libs';
 
 export type collectionData = {

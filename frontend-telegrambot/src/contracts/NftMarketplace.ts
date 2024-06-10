@@ -1,5 +1,5 @@
-import { Address, beginCell, Cell, contractAddress, internal, SendMode, StateInit } from 'ton-core';
-import { OpenedWallet } from 'utils';
+import { Address, beginCell, Cell, contractAddress, internal, SendMode, StateInit } from '@ton/ton';
+import { OpenedWallet } from '../libs';
 
 export class NftMarketplace {
 	public ownerAddress: Address;
