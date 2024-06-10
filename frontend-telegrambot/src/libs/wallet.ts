@@ -1,5 +1,8 @@
 import { WalletInfoRemote, encodeTelegramUrlParameters, isTelegramUrl } from '@tonconnect/sdk';
 import { InlineKeyboardButton } from 'grammy/types';
+import { getHttpV4Endpoint } from '@orbs-network/ton-access';
+import { KeyPair, mnemonicToWalletKey } from '@ton/crypto';
+import { OpenedContract, TonClient4, WalletContractV4 } from '@ton/ton';
 
 const AT_WALLET_APP_NAME = 'telegram-wallet';
 const pTimeoutException = Symbol();
@@ -68,3 +71,22 @@ const pTimeout = function <T>(promise: Promise<T>, time: number, exception: unkn
 };
 
 export { buildUniversalKeyboard, addTGReturnStrategy, convertDeeplinkToUniversalLink, pTimeout };
+
+export async function openWallet(mnemonic: string[], testnet: boolean = true) {
+	const keyPair = await mnemonicToWalletKey(mnemonic);
+	// const toncenterBaseEndpoint: string = testnet ? 'https://testnet.toncenter.com' : 'https://toncenter.com';
+	// const client = new TonClient({
+	// 	endpoint: `${toncenterBaseEndpoint}/api/v2/jsonRPC`,
+	// 	apiKey: process.env.TONCENTER_API_KEY,
+	// });
+	const endpoint = await getHttpV4Endpoint({ network: testnet ? 'testnet' : 'mainnet' });
+	const client = new TonClient4({ endpoint });
+	const wallet = WalletContractV4.create({ publicKey: keyPair.publicKey, workchain: 0 });
+	let contract = client.open(wallet);
+	return { contract, keyPair };
+}
+
+export type OpenedWallet = {
+	contract: OpenedContract<WalletContractV4>;
+	keyPair: KeyPair;
+};

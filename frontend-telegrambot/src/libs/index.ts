@@ -1,3 +1,4 @@
+import { sleep, waitSeqno } from './delay';
 import {
 	decodeOffChainContent,
 	decodeOnChainContent,
@@ -9,9 +10,10 @@ import {
 	unixNow,
 } from './nft';
 import { fetchJSON, initial, sha256 } from './util';
-import { addTGReturnStrategy, convertDeeplinkToUniversalLink, pTimeout } from './wallet';
+import { OpenedWallet, addTGReturnStrategy, convertDeeplinkToUniversalLink, openWallet, pTimeout } from './wallet';
 
 export {
+	type OpenedWallet,
 	addTGReturnStrategy,
 	convertDeeplinkToUniversalLink,
 	decodeOffChainContent,
@@ -22,8 +24,11 @@ export {
 	flattenSnakeCell,
 	initial,
 	makeSnakeCell,
+	openWallet,
 	pTimeout,
 	randomAddress,
 	sha256,
+	sleep,
 	unixNow,
+	waitSeqno,
 };
