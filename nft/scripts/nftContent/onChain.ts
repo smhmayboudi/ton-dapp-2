@@ -9,7 +9,7 @@ export function toTextCell(s: string): Cell {
     return beginCell().storeUint(0, 8).storeStringTail(s).endCell();
 }
 
-export type collectionContent = {
+export type content = {
     name: string;
     description: string;
     image: string;
@@ -21,15 +21,15 @@ export type itemContent = {
     image: string;
 };
 
-export function buildCollectionContentCell(content: collectionContent): Cell {
-    const collectionContentDict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell())
+export function buildContentCell(content: content): Cell {
+    const contentDict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell())
         .set(toSha256('name'), toTextCell(content.name))
         .set(toSha256('description'), toTextCell(content.description))
         .set(toSha256('image'), toTextCell(content.image));
 
     return beginCell() // need to fix
         .storeUint(0, 8)
-        .storeDict(collectionContentDict)
+        .storeDict(contentDict)
         .endCell();
 }
 

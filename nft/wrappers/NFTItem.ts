@@ -1,21 +1,18 @@
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
 
 export type NFTItemConfig = {
-    value: bigint;
-    queryId: number;
-    amount: bigint; // to send with nft
-    itemIndex: number;
-    itemOwnerAddress: Address;
+    index: number;
+    collectionAddress: Address;
+    ownerAddress: Address;
     itemContent: Cell;
 };
 
 export function nftItemConfigToCell(config: NFTItemConfig): Cell {
     return beginCell()
-        .storeUint(1, 32) // operation
-        .storeUint(config.queryId, 64)
-        .storeUint(config.itemIndex, 64)
-        .storeCoins(config.amount)
-        .storeRef(beginCell().storeAddress(config.itemOwnerAddress).storeRef(config.itemContent)) // body
+        .storeUint(config.index, 64)
+        .storeAddress(config.collectionAddress)
+        .storeAddress(config.ownerAddress)
+        .storeRef(config.itemContent) // body
         .endCell();
 }
 
@@ -40,15 +37,6 @@ export class NFTItem implements Contract {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
-        });
-    }
-
-    async sendNFTMint(provider: ContractProvider, via: Sender, config: NFTItemConfig): Promise<void> {
-        const data = nftItemConfigToCell(config);
-        await provider.internal(via, {
-            value: config.value,
-            sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: data,
         });
     }
 

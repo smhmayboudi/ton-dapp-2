@@ -19,7 +19,7 @@ export type RoyaltyParams = {
 export type NFTCollectionConfig = {
     ownerAddress: Address;
     nextItemIndex: number;
-    collectionContent: Cell;
+    content: Cell;
     nftItemCode: Cell;
     royaltyParams: RoyaltyParams;
 };
@@ -28,7 +28,7 @@ export function nftCollectionConfigToCell(config: NFTCollectionConfig): Cell {
     return beginCell()
         .storeAddress(config.ownerAddress)
         .storeUint(config.nextItemIndex, 64)
-        .storeRef(config.collectionContent)
+        .storeRef(config.content)
         .storeRef(config.nftItemCode)
         .storeRef(
             beginCell()
@@ -63,6 +63,31 @@ export class NFTCollection implements Contract {
         });
     }
 
+    async sendMintNFT(
+        provider: ContractProvider,
+        via: Sender,
+        opts: {
+            value: bigint;
+            queryId: number;
+            amount: bigint; // to send with nft
+            itemIndex: number;
+            itemOwnerAddress: Address;
+            itemContent: Cell;
+        },
+    ): Promise<void> {
+        await provider.internal(via, {
+            value: opts.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(1, 32) // operation code
+                .storeUint(opts.queryId, 64)
+                .storeUint(opts.itemIndex, 64)
+                .storeCoins(opts.amount)
+                .storeRef(beginCell().storeAddress(opts.itemOwnerAddress).storeRef(opts.itemContent)) // body
+                .endCell(),
+        });
+    }
+
     async sendChangeOwner(
         provider: ContractProvider,
         via: Sender,
@@ -86,16 +111,16 @@ export class NFTCollection implements Contract {
     async getCollectionData(provider: ContractProvider): Promise<{
         nextItem: bigint;
         ownerAddress: Address;
-        collectionContent: Cell;
+        content: Cell;
     }> {
         const collectionData = await provider.get('get_collection_data', []);
         const stack = await collectionData.stack;
         let nextItem = stack.readBigNumber();
-        let collectionContent = await stack.readCell();
+        let content = await stack.readCell();
         let ownerAddress = await stack.readAddress();
         return {
             nextItem,
-            collectionContent,
+            content,
             ownerAddress,
         };
     }
