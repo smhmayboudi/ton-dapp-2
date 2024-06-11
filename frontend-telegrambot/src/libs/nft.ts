@@ -1,5 +1,5 @@
-import { pseudoRandomBytes } from 'crypto';
-import { Address, BitBuilder, BitReader, Cell, beginCell } from '@ton/ton';
+// import { pseudoRandomBytes } from 'crypto';
+import { BitBuilder, BitReader, Cell, beginCell } from '@ton/ton';
 
 const OFF_CHAIN_CONTENT_PREFIX = 0x01;
 const ON_CHAIN_CONTENT_PREFIX = 0x00;
@@ -108,9 +108,9 @@ const makeSnakeCell = function (data: Buffer): Cell {
 	return curCell.endCell();
 };
 
-const randomAddress = function () {
-	return new Address(0, pseudoRandomBytes(256 / 8));
-};
+// const randomAddress = function () {
+// 	return new Address(0, pseudoRandomBytes(256 / 8));
+// };
 
 const unixNow = function () {
 	return Math.floor(Date.now() / 1000);
