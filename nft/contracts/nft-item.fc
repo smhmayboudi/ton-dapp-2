@@ -39,7 +39,7 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
     }
 }
 
-() store_data(int index, slice collection_address, slice owner_address, cell content) impure {
+() save_data(int index, slice collection_address, slice owner_address, cell content) impure {
     set_data(
         begin_cell()
             .store_uint(index, 64)
@@ -95,7 +95,7 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
       send_msg(response_destination, rest_amount, op::excesses(), query_id, null(), 1); ;; paying fees, revert on errors
     }
 
-    store_data(index, collection_address, new_owner_address, content);
+    save_data(index, collection_address, new_owner_address, content);
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
@@ -121,7 +121,7 @@ int min_tons_for_storage() asm "50000000 PUSHINT"; ;; 0.05 TON
     (int init?, int index, slice collection_address, slice owner_address, cell content) = load_data();
     if (~ init?) {
       throw_unless(405, equal_slices(collection_address, sender_address));
-      store_data(index, collection_address, in_msg_body~load_msg_addr(), in_msg_body~load_ref());
+      save_data(index, collection_address, in_msg_body~load_msg_addr(), in_msg_body~load_ref());
       return ();
     }
 
