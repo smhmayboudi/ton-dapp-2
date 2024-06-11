@@ -15,7 +15,7 @@ export async function run(provider: NetworkProvider) {
     const nftCollection = provider.open(
         NFTCollection.createFromConfig(
             {
-                ownerAddress: provider.sender().address!!,
+                ownerAddress: provider.sender().address!,
                 nextItemIndex: 0,
                 collectionContent: buildCollectionContentCell({
                     name: 'مجموعه دکورستان',

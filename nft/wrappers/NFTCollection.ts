@@ -10,6 +10,15 @@ import {
     TupleItemInt,
 } from '@ton/core';
 
+export type NFTItemConfig = {
+    value: bigint;
+    queryId: number;
+    amount: bigint; // to send with nft
+    itemIndex: number;
+    itemOwnerAddress: Address;
+    itemContent: Cell;
+};
+
 export type RoyaltyParams = {
     royaltyFactor: number;
     royaltyBase: number;
@@ -63,18 +72,7 @@ export class NFTCollection implements Contract {
         });
     }
 
-    async sendMintNFT(
-        provider: ContractProvider,
-        via: Sender,
-        opts: {
-            value: bigint;
-            queryId: number;
-            amount: bigint; // to send with nft
-            itemIndex: number;
-            itemOwnerAddress: Address;
-            itemContent: Cell;
-        },
-    ) {
+    async sendMintNFT(provider: ContractProvider, via: Sender, opts: NFTItemConfig) {
         const nftMessage = beginCell();
         nftMessage.storeAddress(opts.itemOwnerAddress);
         nftMessage.storeRef(opts.itemContent);
@@ -133,4 +131,10 @@ export class NFTCollection implements Contract {
         const itemAddress = await res.stack.readAddress();
         return itemAddress;
     }
+
+    // async GetNFTContent(provider: ContractProvider, index: TupleItemInt, cell: TupleItemCell) {
+    //     const res = await provider.get('get_nft_content', [index, cell]);
+    //     const itemCell = await res.stack.readCell();
+    //     return itemCell;
+    // }
 }

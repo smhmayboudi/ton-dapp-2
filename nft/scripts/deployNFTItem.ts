@@ -3,7 +3,7 @@ import { NetworkProvider } from '@ton/blueprint';
 import { setItemContentCell } from './nftContent/onChain';
 import { NFTCollection } from '../wrappers/NFTCollection';
 
-const randomSeed= Math.floor(Math.random() * 10000);
+const randomSeed = Math.floor(Math.random() * 10000);
 
 export async function run(provider: NetworkProvider, args: string[]) {
     // const nft = provider.open(NFTItem.createFromConfig({}, await compile('NFTItem')));
@@ -24,7 +24,7 @@ export async function run(provider: NetworkProvider, args: string[]) {
         queryId: randomSeed,
         amount: toNano('0.014'),
         itemIndex: 0,
-        itemOwnerAddress: provider.sender().address!!,
+        itemOwnerAddress: provider.sender().address!,
         itemContent: setItemContentCell({
             name: 'اتاق نشیمن',
             description: 'اتاق نشیمن در سایت دکورستان https://decorestan.com/',
