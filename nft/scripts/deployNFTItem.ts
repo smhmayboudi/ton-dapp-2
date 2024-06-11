@@ -1,7 +1,7 @@
 import { Address, toNano } from '@ton/core';
 import { NetworkProvider } from '@ton/blueprint';
 import { setItemContentCell } from './nftContent/onChain';
-import { NFTCollection } from '../wrappers/NFTCollection';
+import { NFTItem } from '../wrappers/NFTItem';
 
 const randomSeed = Math.floor(Math.random() * 10000);
 
@@ -17,9 +17,9 @@ export async function run(provider: NetworkProvider, args: string[]) {
 
     const address = Address.parse(args.length > 0 ? args[0] : await ui.input('Collection address'));
 
-    const nftCollection = provider.open(NFTCollection.createFromAddress(address));
+    const nftItem = provider.open(NFTItem.createFromAddress(address));
 
-    const mint = await nftCollection.sendMintNFT(provider.sender(), {
+    const mint = await nftItem.sendNFTMint(provider.sender(), {
         value: toNano('0.02'),
         queryId: randomSeed,
         amount: toNano('0.014'),
@@ -32,5 +32,5 @@ export async function run(provider: NetworkProvider, args: string[]) {
         }),
     });
 
-    ui.write(`NFT Item deployed at https://testnet.tonscan.org/address/${nftCollection.address}`);
+    ui.write(`NFT Item deployed at https://testnet.tonscan.org/address/${nftItem.address}`);
 }
