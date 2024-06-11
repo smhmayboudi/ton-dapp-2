@@ -1,6 +1,5 @@
 import { Address, toNano } from '@ton/core';
-import { NFTItem } from '../wrappers/NFTItem';
-import { compile, NetworkProvider } from '@ton/blueprint';
+import { NetworkProvider } from '@ton/blueprint';
 import { setItemContentCell } from './nftContent/onChain';
 import { NFTCollection } from '../wrappers/NFTCollection';
 
