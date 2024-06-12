@@ -5,24 +5,66 @@ import {
     Contract,
     contractAddress,
     ContractProvider,
+    Dictionary,
+    DictionaryValue,
     Sender,
     SendMode,
+    TupleItemCell,
     TupleItemInt,
 } from '@ton/ton';
 
-export type RoyaltyParams = {
+type BatchConfig = {
+    amount: bigint;
+    item: ItemConfig;
+};
+
+type BatchDeployConfig = {
+    queryId: number;
+    itemIndex: number;
+    value: bigint;
+    batch: BatchConfig[];
+};
+
+type ChangeOwnerConfig = {
+    value: bigint;
+    queryId: bigint;
+    newOwnerAddress: Address;
+};
+
+type ItemConfig = {
+    ownerAddress: Address;
+    content: Cell;
+};
+
+type MintNFTConfig = {
+    queryId: number;
+    itemIndex: number;
+    value: bigint;
+    amount: bigint; // to send with nft
+    item: ItemConfig;
+};
+
+type NFTCollectionConfig = {
+    ownerAddress: Address;
+    nextItemIndex: number;
+    content: Cell;
+    nftItemCode: Cell;
+    royaltyParams: RoyaltyParamsConfig;
+};
+
+type RoyaltyParamsConfig = {
     royaltyFactor: number;
     royaltyBase: number;
     royaltyAddress: Address;
 };
 
-export type NFTCollectionConfig = {
-    ownerAddress: Address;
-    nextItemIndex: number;
-    content: Cell;
-    nftItemCode: Cell;
-    royaltyParams: RoyaltyParams;
-};
+function royaltyParamsConfigToCell(config: RoyaltyParamsConfig): Cell {
+    return beginCell()
+        .storeUint(config.royaltyFactor, 16)
+        .storeUint(config.royaltyBase, 16)
+        .storeAddress(config.royaltyAddress)
+        .endCell();
+}
 
 export function nftCollectionConfigToCell(config: NFTCollectionConfig): Cell {
     return beginCell()
@@ -30,13 +72,12 @@ export function nftCollectionConfigToCell(config: NFTCollectionConfig): Cell {
         .storeUint(config.nextItemIndex, 64)
         .storeRef(config.content)
         .storeRef(config.nftItemCode)
-        .storeRef(
-            beginCell()
-                .storeUint(config.royaltyParams.royaltyFactor, 16)
-                .storeUint(config.royaltyParams.royaltyBase, 16)
-                .storeAddress(config.royaltyParams.royaltyAddress),
-        )
+        .storeRef(royaltyParamsConfigToCell(config.royaltyParams))
         .endCell();
+}
+
+function nftItemConfigToCell(item: ItemConfig): Cell {
+    return beginCell().storeAddress(item.ownerAddress).storeRef(item.content).endCell();
 }
 
 export class NFTCollection implements Contract {
@@ -63,47 +104,66 @@ export class NFTCollection implements Contract {
         });
     }
 
-    async sendMintNFT(
-        provider: ContractProvider,
-        via: Sender,
-        opts: {
-            value: bigint;
-            queryId: number;
-            amount: bigint; // to send with nft
-            itemIndex: number;
-            itemOwnerAddress: Address;
-            itemContent: Cell;
-        },
-    ): Promise<void> {
+    async sendMintNFT(provider: ContractProvider, via: Sender, config: MintNFTConfig): Promise<void> {
         await provider.internal(via, {
-            value: opts.value,
+            value: config.value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell()
                 .storeUint(1, 32) // operation code
-                .storeUint(opts.queryId, 64)
-                .storeUint(opts.itemIndex, 64)
-                .storeCoins(opts.amount)
-                .storeRef(beginCell().storeAddress(opts.itemOwnerAddress).storeRef(opts.itemContent)) // body
+                .storeUint(config.queryId, 64)
+                .storeUint(config.itemIndex, 64)
+                .storeCoins(config.amount)
+                .storeRef(nftItemConfigToCell(config.item)) // nft_content
                 .endCell(),
         });
     }
 
-    async sendChangeOwner(
-        provider: ContractProvider,
-        via: Sender,
-        opts: {
-            value: bigint;
-            queryId: bigint;
-            newOwnerAddress: Address;
-        },
-    ): Promise<void> {
+    async sendBatchDeploy(provider: ContractProvider, via: Sender, config: BatchDeployConfig): Promise<void> {
+        const MintNftDictValue: DictionaryValue<BatchConfig> = {
+            serialize(src, builder) {
+                const nftItemMessage = beginCell();
+                builder.storeCoins(src.amount);
+                builder.storeRef(nftItemConfigToCell(src.item)); // nft_content
+                builder.storeRef(nftItemMessage);
+                builder.endCell();
+            },
+            parse(): BatchConfig {
+                return {
+                    amount: 0n,
+                    item: {
+                        ownerAddress: new Address(0, Buffer.from([])),
+                        content: beginCell().endCell(),
+                    },
+                };
+            },
+        };
+
+        const content = Dictionary.empty(Dictionary.Keys.Uint(64), MintNftDictValue);
+        let index = 1;
+        for (const item of config.batch) {
+            content.set(++index, item);
+        }
+
         await provider.internal(via, {
-            value: opts.value,
+            value: config.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(2, 32) // operation code
+                .storeUint(config.queryId, 64)
+                .storeUint(config.itemIndex, 64)
+                .storeDict(content)
+                .endCell(),
+        });
+    }
+
+    async sendChangeOwner(provider: ContractProvider, via: Sender, config: ChangeOwnerConfig): Promise<void> {
+        await provider.internal(via, {
+            value: config.value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell()
                 .storeUint(3, 32) //operation
-                .storeUint(opts.queryId, 64)
-                .storeAddress(opts.newOwnerAddress)
+                .storeUint(config.queryId, 64)
+                .storeAddress(config.newOwnerAddress)
                 .endCell(),
         });
     }
@@ -131,9 +191,9 @@ export class NFTCollection implements Contract {
         return itemAddress;
     }
 
-    // async getNFTContent(provider: ContractProvider, index: TupleItemInt, cell: TupleItemCell): Promise<Cell> {
-    //     const res = await provider.get('get_nft_content', [index, cell]);
-    //     const itemCell = await res.stack.readCell();
-    //     return itemCell;
-    // }
+    async getNFTContent(provider: ContractProvider, index: TupleItemInt, cell: TupleItemCell): Promise<Cell> {
+        const res = await provider.get('get_nft_content', [index, cell]);
+        const itemCell = await res.stack.readCell();
+        return itemCell;
+    }
 }
