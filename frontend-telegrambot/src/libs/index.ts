@@ -10,7 +10,7 @@ import {
 	unixNow,
 } from './nft';
 import { fetchJSON, initial, sha256 } from './util';
-import { OpenedWallet, addTGReturnStrategy, convertDeeplinkToUniversalLink, openWallet, pTimeout } from './wallet';
+import { OpenedWallet, addTGReturnStrategy, buildUniversalKeyboard, convertDeeplinkToUniversalLink, openWallet, pTimeout, pTimeoutException } from './wallet';
 
 export {
 	type OpenedWallet,
@@ -31,4 +31,6 @@ export {
 	sleep,
 	unixNow,
 	waitSeqno,
+	buildUniversalKeyboard,
+	pTimeoutException,
 };

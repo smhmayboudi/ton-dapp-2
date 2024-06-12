@@ -5,7 +5,7 @@ import { KeyPair, mnemonicToWalletKey } from '@ton/crypto';
 import { OpenedContract, TonClient4, WalletContractV4 } from '@ton/ton';
 
 const AT_WALLET_APP_NAME = 'telegram-wallet';
-const pTimeoutException = Symbol();
+export const pTimeoutException = Symbol();
 
 const TELEGRAM_BOT_LINK = 'https://t.me/front_end_telegram_bot';
 
