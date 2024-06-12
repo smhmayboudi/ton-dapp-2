@@ -1,4 +1,4 @@
-import { toNano } from '@ton/core';
+import { toNano } from '@ton/ton';
 import { NetworkProvider, compile } from '@ton/blueprint';
 import { NFTItem } from '../wrappers/NFTItem';
 

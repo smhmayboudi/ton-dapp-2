@@ -11,9 +11,6 @@ importers:
       '@ton/blueprint':
         specifier: ^0.21.0
         version: 0.21.0(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)(@ton/ton@13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0))(@types/node@20.14.2)(typescript@5.4.5)
-      '@ton/core':
-        specifier: ~0
-        version: 0.56.3(@ton/crypto@3.2.0)
       '@ton/crypto':
         specifier: ^3.2.0
         version: 3.2.0

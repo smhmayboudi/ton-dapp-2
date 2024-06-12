@@ -1,4 +1,4 @@
-import { Address, toNano } from '@ton/core';
+import { Address, toNano } from '@ton/ton';
 import { NFTCollection } from '../wrappers/NFTCollection';
 import { compile, NetworkProvider } from '@ton/blueprint';
 import { buildContentCell, setItemContentCell } from './nftContent/onChain';
