@@ -31,6 +31,12 @@ type ChangeOwnerConfig = {
     newOwnerAddress: Address;
 };
 
+type CollectionData = {
+    nextItem: bigint;
+    ownerAddress: Address;
+    content: Cell;
+};
+
 type ItemConfig = {
     ownerAddress: Address;
     content: Cell;
@@ -168,11 +174,7 @@ export class NFTCollection implements Contract {
         });
     }
 
-    async getCollectionData(provider: ContractProvider): Promise<{
-        nextItem: bigint;
-        ownerAddress: Address;
-        content: Cell;
-    }> {
+    async getCollectionData(provider: ContractProvider): Promise<CollectionData> {
         const collectionData = await provider.get('get_collection_data', []);
         const stack = await collectionData.stack;
         let nextItem = stack.readBigNumber();
