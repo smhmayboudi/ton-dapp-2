@@ -26,6 +26,7 @@
 		"@grammyjs/storage-cloudflare": "^2.4.2",
 		"@orbs-network/ton-access": "^2.3.3",
 		"@ton-community/func-js": "^0.7.0",
+		"@ton/crypto": "^3.2.0",
 		"@ton/ton": "^13.11.2",
 		"@tonconnect/sdk": "^3.0.3",
 		"grammy": "^1.24.0",

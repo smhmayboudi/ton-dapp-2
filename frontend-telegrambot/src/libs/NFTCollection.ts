@@ -8,7 +8,7 @@ import {
     Sender,
     SendMode,
     TupleItemInt,
-} from '@ton/core';
+} from '@ton/ton';
 
 export type RoyaltyParams = {
     royaltyFactor: number;

@@ -26,6 +26,9 @@ importers:
       '@ton-community/func-js':
         specifier: ^0.7.0
         version: 0.7.0
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@ton/ton':
         specifier: ^13.11.2
         version: 13.11.2(@ton/core@0.56.3(@ton/crypto@3.2.0))(@ton/crypto@3.2.0)

@@ -1,4 +1,4 @@
-import { Dictionary, beginCell, Cell } from '@ton/core';
+import { Dictionary, beginCell, Cell } from '@ton/ton';
 import { sha256_sync } from '@ton/crypto';
 
 export function toSha256(s: string): bigint {
