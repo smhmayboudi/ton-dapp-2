@@ -1,10 +1,20 @@
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/ton';
 
-export type NFTItemConfig = {
+type GetStaticDataConfig = {
+    value: bigint;
+    queryId: number;
+};
+
+type NFTItemConfig = {
     index: number;
     collectionAddress: Address;
     ownerAddress: Address;
-    itemContent: Cell;
+    content: Cell;
+};
+
+type TransferConfig = {
+    value: bigint;
+    queryId: number;
 };
 
 export function nftItemConfigToCell(config: NFTItemConfig): Cell {
@@ -12,7 +22,7 @@ export function nftItemConfigToCell(config: NFTItemConfig): Cell {
         .storeUint(config.index, 64)
         .storeAddress(config.collectionAddress)
         .storeAddress(config.ownerAddress)
-        .storeRef(config.itemContent) // body
+        .storeRef(config.content) // content
         .endCell();
 }
 
@@ -37,6 +47,28 @@ export class NFTItem implements Contract {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
+        });
+    }
+
+    async sendTransfer(provider: ContractProvider, via: Sender, config: TransferConfig): Promise<void> {
+        await provider.internal(via, {
+            value: config.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(0x5fcc3d14, 32) //operation
+                .storeUint(config.queryId, 64)
+                .endCell(),
+        });
+    }
+
+    async sendGetStaticData(provider: ContractProvider, via: Sender, config: GetStaticDataConfig): Promise<void> {
+        await provider.internal(via, {
+            value: config.value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(0x2fcb26a2, 32) //operation
+                .storeUint(config.queryId, 64)
+                .endCell(),
         });
     }
 
