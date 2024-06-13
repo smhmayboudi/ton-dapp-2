@@ -38,6 +38,10 @@ type CollectionData = {
     content: Cell;
 };
 
+type GetRoyaltyParamsConfig = {
+    queryId: number;
+};
+
 type ItemConfig = {
     ownerAddress: Address;
     content: Cell;
@@ -108,6 +112,17 @@ export class NFTCollection implements Contract {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: beginCell().endCell(),
+        });
+    }
+
+    async sendGetRoyaltyParams(provider: ContractProvider, via: Sender, config: GetRoyaltyParamsConfig): Promise<void> {
+        await provider.internal(via, {
+            value: 0n,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: beginCell()
+                .storeUint(0x693d3950, 32) // operation code
+                .storeUint(config.queryId, 64)
+                .endCell(),
         });
     }
 
