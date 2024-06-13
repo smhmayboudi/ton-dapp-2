@@ -9,6 +9,7 @@ import {
     DictionaryValue,
     Sender,
     SendMode,
+    Slice,
     TupleItemCell,
     TupleItemInt,
 } from '@ton/ton';
@@ -27,7 +28,7 @@ type BatchDeployConfig = {
 
 type ChangeOwnerConfig = {
     value: bigint;
-    queryId: bigint;
+    queryId: number;
     newOwnerAddress: Address;
 };
 
@@ -143,6 +144,23 @@ export class NFTCollection implements Contract {
                 };
             },
         };
+
+        // const MintNftDictValue: DictionaryValue<BatchConfig> = {
+        //     serialize(src, builder): void {
+        //         console.log('serialize');
+        //         builder.storeCoins(src.amount);
+        //         builder.storeRef(nftItemConfigToCell(src.item)); // nft_content
+        //         builder.endCell();
+        //     },
+        //     parse(src: Slice): BatchConfig {
+        //         console.log('parse');
+        //         const amount = src.loadCoins();
+        //         const item = src.loadRef().asSlice();
+        //         const ownerAddress = item.loadAddress();
+        //         const content = item.loadRef();
+        //         return { amount, item: { ownerAddress, content } };
+        //     },
+        // };
 
         const content = Dictionary.empty(Dictionary.Keys.Uint(64), MintNftDictValue);
         let index = 1;

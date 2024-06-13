@@ -9,34 +9,17 @@ export function toTextCell(s: string): Cell {
     return beginCell().storeUint(0, 8).storeStringTail(s).endCell();
 }
 
-export type content = {
+export type ContentConfig = {
     name: string;
     description: string;
     image: string;
 };
 
-export type itemContent = {
-    name: string;
-    description: string;
-    image: string;
-};
-
-export function buildContentCell(content: content): Cell {
+export function contentConfigToCell(content: ContentConfig): Cell {
     const contentDict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell())
         .set(toSha256('name'), toTextCell(content.name))
         .set(toSha256('description'), toTextCell(content.description))
         .set(toSha256('image'), toTextCell(content.image));
 
-    return beginCell() // need to fix
-        .storeUint(0, 8)
-        .storeDict(contentDict)
-        .endCell();
-}
-
-export function setItemContentCell(content: itemContent): Cell {
-    const itemContentDict = Dictionary.empty(Dictionary.Keys.BigUint(256), Dictionary.Values.Cell())
-        .set(toSha256('name'), toTextCell(content.name))
-        .set(toSha256('description'), toTextCell(content.description))
-        .set(toSha256('image'), toTextCell(content.image));
-    return beginCell().storeUint(0, 8).storeDict(itemContentDict).endCell();
+    return beginCell().storeUint(0, 8).storeDict(contentDict).endCell();
 }
