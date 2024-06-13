@@ -32,7 +32,6 @@ type ChangeOwnerConfig = {
     newOwnerAddress: Address;
 };
 
-
 type CollectionData = {
     nextItem: bigint;
     ownerAddress: Address;
@@ -150,7 +149,7 @@ export class NFTCollection implements Contract {
             serialize(src, builder): void {
                 console.log('serialize');
                 builder.storeCoins(src.amount);
-                builder.storeRef(builder.storeRef(nftItemConfigToCell(src.item))); // nft_content
+                builder.storeRef(nftItemConfigToCell(src.item)); // nft_content
             },
             parse(src: Slice): BatchConfig {
                 console.log('parse');
@@ -163,7 +162,7 @@ export class NFTCollection implements Contract {
         };
 
         const content = Dictionary.empty(Dictionary.Keys.Uint(64), MintNftDictValue);
-        let index = 1;
+        let index = config.itemIndex;
         for (const item of config.batch) {
             content.set(++index, item);
         }
@@ -174,7 +173,6 @@ export class NFTCollection implements Contract {
             body: beginCell()
                 .storeUint(2, 32) // operation code
                 .storeUint(config.queryId, 64)
-                .storeUint(config.itemIndex, 64)
                 .storeDict(content)
                 .endCell(),
         });
