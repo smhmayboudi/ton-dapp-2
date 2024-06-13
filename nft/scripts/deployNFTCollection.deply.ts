@@ -28,7 +28,4 @@ export async function run(provider: NetworkProvider) {
         ),
     );
     await nftCollection.sendDeploy(provider.sender(), toNano(0.05));
-    ui.write(
-        `NFT Collection deployed at https://${provider.network() == 'testnet' ? 'testnet.' : ''}tonscan.org/address/${nftCollection.address}`,
-    );
 }
