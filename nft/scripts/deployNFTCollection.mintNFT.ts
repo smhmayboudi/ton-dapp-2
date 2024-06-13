@@ -12,8 +12,8 @@ export async function run(provider: NetworkProvider, args: string[]) {
     await nftCollection.sendMintNFT(provider.sender(), {
         queryId: randomSeed,
         itemIndex: 0,
-        value: toNano('0.02'),
-        amount: toNano('0.014'),
+        value: toNano(0.02),
+        amount: toNano(0.014),
         item: {
             ownerAddress: provider.sender().address!,
             content: contentConfigToCell({

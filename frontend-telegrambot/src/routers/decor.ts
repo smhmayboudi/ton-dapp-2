@@ -252,7 +252,7 @@ router.route('decor-q5', async (ctx) => {
 	// 	queryId: 0,
 	// 	itemOwnerAddress: wallet.contract.address,
 	// 	itemIndex: 0,
-	// 	amount: toNano('0.05'),
+	// 	amount: toNano(0.05),
 	// 	commonContentUrl: `ipfs://${IpfsHashMeta}/${fileMeta.name}`,
 	// };
 
@@ -268,11 +268,11 @@ router.route('decor-q5', async (ctx) => {
 	// 	marketplaceAddress: marketplace.address,
 	// 	nftAddress: nftToSaleAddress,
 	// 	nftOwnerAddress: null,
-	// 	fullPrice: toNano('10'),
+	// 	fullPrice: toNano(10),
 	// 	marketplaceFeeAddress: wallet.contract.address,
-	// 	marketplaceFee: toNano('1'),
+	// 	marketplaceFee: toNano(1),
 	// 	royaltyAddress: wallet.contract.address,
-	// 	royaltyAmount: toNano('0.5'),
+	// 	royaltyAmount: toNano(0.5),
 	// };
 
 	// const nftSaleContract = new NftSale(saleData);

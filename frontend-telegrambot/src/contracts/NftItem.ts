@@ -43,12 +43,12 @@ export class NftItem {
 			secretKey: wallet.keyPair.secretKey,
 			messages: [
 				internal({
-					value: '0.05',
+					value: toNano(0.05),
 					to: nftAddress,
 					body: this.createTransferBody({
 						newOwner,
 						responseTo: wallet.contract.address,
-						forwardAmount: toNano('0.02'),
+						forwardAmount: toNano(0.02),
 					}),
 				}),
 			],

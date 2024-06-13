@@ -12,10 +12,10 @@ export async function run(provider: NetworkProvider, args: string[]) {
     await nftCollection.sendBatchDeploy(provider.sender(), {
         queryId: randomSeed,
         itemIndex: 0,
-        value: toNano('0.02'),
+        value: toNano(0.5),
         batch: [
             {
-                amount: toNano('0.22'),
+                amount: toNano(0.5),
                 item: {
                     ownerAddress: provider.sender().address!,
                     content: contentConfigToCell({
@@ -26,7 +26,7 @@ export async function run(provider: NetworkProvider, args: string[]) {
                 },
             },
             {
-                amount: toNano('0.024'),
+                amount: toNano(0.5),
                 item: {
                     ownerAddress: provider.sender().address!,
                     content: contentConfigToCell({
@@ -39,7 +39,7 @@ export async function run(provider: NetworkProvider, args: string[]) {
         ],
         // batch: [
         //     {
-        //         amount: toNano('0.018'),
+        //         amount: toNano(0.018),
         //         item: {
         //             ownerAddress: provider.sender().address!,
         //             content: contentConfigToCell({
@@ -50,7 +50,7 @@ export async function run(provider: NetworkProvider, args: string[]) {
         //         },
         //     },
         //     {
-        //         amount: toNano('0.02'),
+        //         amount: toNano(0.02),
         //         item: {
         //             ownerAddress: provider.sender().address!,
         //             content: contentConfigToCell({

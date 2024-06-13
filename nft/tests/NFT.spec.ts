@@ -22,7 +22,7 @@ describe('NFT', () => {
 
         deployer = await blockchain.treasury('deployer');
 
-        const deployResult = await nft.sendDeploy(deployer.getSender(), toNano('0.05'));
+        const deployResult = await nft.sendDeploy(deployer.getSender(), toNano(0.05));
 
         expect(deployResult.transactions).toHaveTransaction({
             from: deployer.address,

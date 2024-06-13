@@ -26,7 +26,7 @@ export class NftSale {
 
 		const payload = beginCell();
 		payload.storeUint(1, 32);
-		payload.storeCoins(toNano('0.05'));
+		payload.storeCoins(toNano(0.05));
 		payload.storeRef(stateInit);
 		payload.storeRef(new Cell());
 
