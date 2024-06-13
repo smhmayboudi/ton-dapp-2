@@ -16,7 +16,4 @@ export async function run(provider: NetworkProvider, args: string[]) {
         queryId: 0,
     });
     await provider.waitForDeploy(nft.address);
-    ui.write(
-        `NFT Item deployed at https://${provider.network() == 'testnet' ? 'testnet.' : ''}tonscan.org/address/${nft.address}`,
-    );
 }

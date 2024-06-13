@@ -32,6 +32,7 @@ type ChangeOwnerConfig = {
     newOwnerAddress: Address;
 };
 
+
 type CollectionData = {
     nextItem: bigint;
     ownerAddress: Address;
@@ -141,41 +142,25 @@ export class NFTCollection implements Contract {
     }
 
     async sendBatchDeploy(provider: ContractProvider, via: Sender, config: BatchDeployConfig): Promise<void> {
+        if (config.batch.length > 250) {
+            throw new Error('Too long list');
+        }
+
         const MintNftDictValue: DictionaryValue<BatchConfig> = {
-            serialize(src, builder) {
-                const nftItemMessage = beginCell();
+            serialize(src, builder): void {
+                console.log('serialize');
                 builder.storeCoins(src.amount);
-                builder.storeRef(nftItemConfigToCell(src.item)); // nft_content
-                builder.storeRef(nftItemMessage);
-                builder.endCell();
+                builder.storeRef(builder.storeRef(nftItemConfigToCell(src.item))); // nft_content
             },
-            parse(): BatchConfig {
-                return {
-                    amount: 0n,
-                    item: {
-                        ownerAddress: new Address(0, Buffer.from([])),
-                        content: beginCell().endCell(),
-                    },
-                };
+            parse(src: Slice): BatchConfig {
+                console.log('parse');
+                const amount = src.loadCoins();
+                const item = src.loadRef().asSlice();
+                const ownerAddress = item.loadAddress();
+                const content = item.loadRef();
+                return { amount, item: { ownerAddress, content } };
             },
         };
-
-        // const MintNftDictValue: DictionaryValue<BatchConfig> = {
-        //     serialize(src, builder): void {
-        //         console.log('serialize');
-        //         builder.storeCoins(src.amount);
-        //         builder.storeRef(nftItemConfigToCell(src.item)); // nft_content
-        //         builder.endCell();
-        //     },
-        //     parse(src: Slice): BatchConfig {
-        //         console.log('parse');
-        //         const amount = src.loadCoins();
-        //         const item = src.loadRef().asSlice();
-        //         const ownerAddress = item.loadAddress();
-        //         const content = item.loadRef();
-        //         return { amount, item: { ownerAddress, content } };
-        //     },
-        // };
 
         const content = Dictionary.empty(Dictionary.Keys.Uint(64), MintNftDictValue);
         let index = 1;

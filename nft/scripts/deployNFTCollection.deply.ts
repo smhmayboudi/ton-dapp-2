@@ -28,4 +28,5 @@ export async function run(provider: NetworkProvider) {
         ),
     );
     await nftCollection.sendDeploy(provider.sender(), toNano(0.05));
+    await provider.waitForDeploy(nftCollection.address);
 }
